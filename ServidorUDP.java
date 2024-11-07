@@ -10,10 +10,10 @@ public class ServidorUDP {
 
     public static void main(String[] args) {
         // Crear algunas preguntas
-        preguntas.add(new Pregunta("¿Cuál es la capital de brasil?", "sao paulo"));
-        preguntas.add(new Pregunta("¿Cuál es el idioma oficial de francia?", "frances"));
+        preguntas.add(new Pregunta("¿Cuál es la capital de Brasil?", "sao paulo"));
+        preguntas.add(new Pregunta("¿Cuál es el idioma oficial de Francia?", "frances"));
         preguntas.add(new Pregunta("¿Cuántos estados tiene EEUU?", "50"));
-        preguntas.add(new Pregunta("¿Cuál es el animal mas rapido terrestro?", "guepardo"));
+        preguntas.add(new Pregunta("¿Cuál es el animal más rápido terrestre?", "guepardo"));
         preguntas.add(new Pregunta("¿Cuál es el océano más grande?", "pacifico"));
 
         try (DatagramSocket socket = new DatagramSocket(PUERTO)) {
@@ -48,7 +48,15 @@ public class ServidorUDP {
                         String respuesta = new String(respuestaPacket.getData(), 0, respuestaPacket.getLength()).trim();
 
                         // Evaluar la respuesta
-                        String resultado = (pregunta.esCorrecta(respuesta)) ? "Correcto" : "Incorrecto";
+                        boolean esCorrecta = pregunta.esCorrecta(respuesta);
+                        String resultado = esCorrecta ? "Correcto" : "Incorrecto";
+
+                        // Imprimir el resultado en la terminal del servidor
+                        System.out.println("Pregunta: " + pregunta.getPregunta());
+                        System.out.println("Respuesta del cliente: " + respuesta);
+                        System.out.println("Resultado: " + resultado);
+
+                        // Enviar el resultado al cliente después de cada respuesta
                         buffer = resultado.getBytes();
                         DatagramPacket packetResultado = new DatagramPacket(buffer, buffer.length, packetRecibido.getAddress(), packetRecibido.getPort());
                         socket.send(packetResultado);  // Enviar el resultado al cliente
@@ -57,7 +65,7 @@ public class ServidorUDP {
                         RegistroServidor.registrarPreguntaYRespuesta(pregunta.getPregunta(), respuesta, resultado);
 
                         // Sumar los puntos (4 puntos por respuesta correcta)
-                        if (pregunta.esCorrecta(respuesta)) {
+                        if (esCorrecta) {
                             puntajeTotal += 4;
                         }
                     }
