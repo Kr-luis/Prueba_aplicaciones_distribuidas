@@ -1,0 +1,14 @@
+
+3 - Fecha: 2024-11-07 15:21:12 | Pregunta: ¿Cuál es el océano más grande? | Respuesta: Pacifico | Resultado: Correcto
+4 - Fecha: 2024-11-07 15:21:15 | Pregunta: ¿Cuál es el metal más ligero? | Respuesta: litio | Resultado: Correcto
+5 - Fecha: 2024-11-07 15:21:20 | Pregunta: ¿Cuál es la capital de Francia? | Respuesta: monaco | Resultado: Incorrecto
+1 - Fecha: 2024-11-07 15:23:28 | Pregunta: ¿Cuál es el idioma oficial de Brasil? | Respuesta: Portugues | Resultado: Correcto
+2 - Fecha: 2024-11-07 15:23:31 | Pregunta: ¿Cuál es la capital de Francia? | Respuesta: paris | Resultado: Correcto
+3 - Fecha: 2024-11-07 15:23:34 | Pregunta: ¿Cuántos planetas hay en el sistema solar? | Respuesta: nueve | Resultado: Incorrecto
+4 - Fecha: 2024-11-07 15:23:38 | Pregunta: ¿Quién escribió 'Cien años de soledad'? | Respuesta: yo | Resultado: Incorrecto
+5 - Fecha: 2024-11-07 15:23:41 | Pregunta: ¿Cuál es el metal más ligero? | Respuesta: litio | Resultado: Correcto
+1 - Fecha: 2024-11-07 15:26:37 | Pregunta: ¿Cuántos estados tiene EEUU? | Respuesta: 50 | Resultado: Correcto
+2 - Fecha: 2024-11-07 15:26:43 | Pregunta: ¿Cuál es la capital de brasil? | Respuesta: sao paulo | Resultado: Correcto
+3 - Fecha: 2024-11-07 15:26:47 | Pregunta: ¿Cuál es el animal mas rapido terrestro? | Respuesta: guepardo | Resultado: Correcto
+4 - Fecha: 2024-11-07 15:26:51 | Pregunta: ¿Cuál es el océano más grande? | Respuesta: pacifico | Resultado: Correcto
+5 - Fecha: 2024-11-07 15:26:54 | Pregunta: ¿Cuál es el idioma oficial de francia? | Respuesta: frances | Resultado: Correcto
