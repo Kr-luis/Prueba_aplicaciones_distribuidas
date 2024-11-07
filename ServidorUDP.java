@@ -1,8 +1,11 @@
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.net.*;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class ServidorUDP {
     private static final int PUERTO = 3003; // Puerto donde el servidor va a escuchar
@@ -10,11 +13,11 @@ public class ServidorUDP {
 
     public static void main(String[] args) {
         // Crear algunas preguntas
-        preguntas.add(new Pregunta("¿Cuál es la capital de Brasil?", "sao paulo"));
-        preguntas.add(new Pregunta("¿Cuál es el idioma oficial de Francia?", "frances"));
+        preguntas.add(new Pregunta("¿Cuál es la capital de Brasil?", "Brasilia"));
+        preguntas.add(new Pregunta("¿Cuál es el idioma oficial de Francia?", "Francés"));
         preguntas.add(new Pregunta("¿Cuántos estados tiene EEUU?", "50"));
-        preguntas.add(new Pregunta("¿Cuál es el animal más rápido terrestre?", "guepardo"));
-        preguntas.add(new Pregunta("¿Cuál es el océano más grande?", "pacifico"));
+        preguntas.add(new Pregunta("¿Cuál es el animal más rápido terrestre?", "Guepardo"));
+        preguntas.add(new Pregunta("¿Cuál es el océano más grande?", "Pacífico"));
 
         try (DatagramSocket socket = new DatagramSocket(PUERTO)) {
             System.out.println("Servidor UDP escuchando en el puerto " + PUERTO);
@@ -30,7 +33,6 @@ public class ServidorUDP {
 
                 // Si el cliente está listo para el test, comenzamos a enviar preguntas
                 if (mensaje.equalsIgnoreCase("¿Estás listo para el test?")) {
-                    // Enviar preguntas al cliente y recibir respuestas
                     Collections.shuffle(preguntas); // Mezcla las preguntas
                     int puntajeTotal = 0;
 
@@ -48,26 +50,21 @@ public class ServidorUDP {
                         String respuesta = new String(respuestaPacket.getData(), 0, respuestaPacket.getLength()).trim();
 
                         // Evaluar la respuesta
-                        boolean esCorrecta = pregunta.esCorrecta(respuesta);
-                        String resultado = esCorrecta ? "Correcto" : "Incorrecto";
+                        String resultado;
+                        if (pregunta.esCorrecta(respuesta)) {
+                            resultado = "Correcto";
+                            puntajeTotal += 4;  // Sumar 4 puntos por respuesta correcta
+                        } else {
+                            resultado = "Incorrecto. La respuesta correcta es: " + pregunta.getRespuestaCorrecta();
+                        }
 
-                        // Imprimir el resultado en la terminal del servidor
-                        System.out.println("Pregunta: " + pregunta.getPregunta());
-                        System.out.println("Respuesta del cliente: " + respuesta);
-                        System.out.println("Resultado: " + resultado);
-
-                        // Enviar el resultado al cliente después de cada respuesta
+                        // Enviar el resultado (Correcto/Incorrecto y la respuesta correcta si es necesario)
                         buffer = resultado.getBytes();
                         DatagramPacket packetResultado = new DatagramPacket(buffer, buffer.length, packetRecibido.getAddress(), packetRecibido.getPort());
-                        socket.send(packetResultado);  // Enviar el resultado al cliente
+                        socket.send(packetResultado);  // Enviar resultado al cliente
 
                         // Registrar la pregunta y la respuesta en el archivo
                         RegistroServidor.registrarPreguntaYRespuesta(pregunta.getPregunta(), respuesta, resultado);
-
-                        // Sumar los puntos (4 puntos por respuesta correcta)
-                        if (esCorrecta) {
-                            puntajeTotal += 4;
-                        }
                     }
 
                     // Enviar puntaje final al cliente (sobre 20)
@@ -102,6 +99,10 @@ public class ServidorUDP {
             return pregunta;
         }
 
+        public String getRespuestaCorrecta() {
+            return respuestaCorrecta;
+        }
+
         public boolean esCorrecta(String respuesta) {
             return respuesta.trim().equalsIgnoreCase(respuestaCorrecta);
         }
@@ -109,20 +110,12 @@ public class ServidorUDP {
 
     // Clase para registrar las respuestas en un archivo .txt
     static class RegistroServidor {
-
         private static int contador = 1;
 
         public static synchronized void registrarPreguntaYRespuesta(String pregunta, String respuesta, String resultado) {
-            LocalDateTime fechaHoraActual = LocalDateTime.now();
-            DateTimeFormatter formato = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-            String fechaHora = fechaHoraActual.format(formato);
-
-            String mensaje = String.format("%d - Fecha: %s | Pregunta: %s | Respuesta: %s | Resultado: %s", 
-                                           contador++, fechaHora, pregunta, respuesta, resultado);
-
             try (BufferedWriter escritor = new BufferedWriter(new FileWriter("registro_respuestas.txt", true))) {
-                escritor.write(mensaje);
-                escritor.newLine();
+                escritor.write(String.format("%d - %s | Pregunta: %s | Respuesta: %s | Resultado: %s\n", 
+                                           contador++, LocalDateTime.now(), pregunta, respuesta, resultado));
             } catch (IOException e) {
                 System.err.println("Error al escribir en el archivo: " + e.getMessage());
             }
